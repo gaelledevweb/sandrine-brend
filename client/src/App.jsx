@@ -4,9 +4,10 @@ import { AuthProvider } from './context/AuthContext';
 
 import NavigationBar from './components/Navbar';
 import Footer from './components/Footer';
-import ProtectedRoute from './components/ProtectedRoute';
 
 import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
           <main className="flex-grow-1">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
             </Routes>
           </main>
           <Footer />
