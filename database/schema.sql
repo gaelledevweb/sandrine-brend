@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS sandrine_brend CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE sandrine_brend;
 
+-- Table de l'administratice (Sandrine Brend)
 CREATE TABLE IF NOT EXISTS admins (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) NOT NULL UNIQUE,
@@ -9,6 +10,17 @@ CREATE TABLE IF NOT EXISTS admins (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table des utilisateurs inscrits
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role VARCHAR(20) DEFAULT 'user',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table des tableaux
 CREATE TABLE IF NOT EXISTS paintings (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
@@ -21,6 +33,7 @@ CREATE TABLE IF NOT EXISTS paintings (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table des réservations de tableaux
 CREATE TABLE IF NOT EXISTS reservations (
   id INT AUTO_INCREMENT PRIMARY KEY,
   painting_id INT NOT NULL,
@@ -33,6 +46,7 @@ CREATE TABLE IF NOT EXISTS reservations (
   FOREIGN KEY (painting_id) REFERENCES paintings(id) ON DELETE CASCADE
 );
 
+-- Table des messages reçus via le formulaire de contact
 CREATE TABLE IF NOT EXISTS contacts (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
