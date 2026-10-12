@@ -1,0 +1,143 @@
+// Polices
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+// Palettes de couleur
+$gold-primary: #C5A059;   // Or chic (Couleur principale et boutons)
+$blue-secondary: #6B8B9E; // Bleu aéro doux (Éléments interactifs, survol)
+$pink-accent: #D69E9E;    // Rose poudré (Accents, notifications et badges)
+$papyrus-bg: #FAF9F6;     // Blanc papyrus (Fond de page type galerie)
+$anthracite-text: #2B2B2B;// Anthracite profond (Texte haut contraste)
+
+// Surcharge des variables bootstrap
+$primary: $gold-primary;
+$secondary: $blue-secondary;
+$accent: $pink-accent;
+$body-bg: $papyrus-bg;
+$body-color: $anthracite-text;
+
+// Polices Bootstrap
+$font-family-serif: 'Playfair Display', Georgia, serif;
+$font-family-sans-serif: 'Montserrat', sans-serif;
+$font-family-base: $font-family-sans-serif;
+
+// Import complet des modules Bootstrap
+@import "bootstrap/scss/bootstrap";
+
+// Styles globaux et polices
+body {
+  background-color: $papyrus-bg;
+  color: $anthracite-text;
+  font-family: $font-family-sans-serif;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6, .font-serif {
+  font-family: $font-family-serif;
+  color: $anthracite-text;
+  font-weight: 600;
+}
+
+// Personnalisation des boutons et éléments
+.btn-primary {
+  background-color: $gold-primary;
+  border-color: $gold-primary;
+  color: #fff;
+  transition: all 0.3s ease;
+
+  &:hover, &:focus {
+    background-color: darken($gold-primary, 8%);
+    border-color: darken($gold-primary, 8%);
+    box-shadow: 0 4px 12px rgba($gold-primary, 0.3);
+  }
+}
+
+.btn-outline-primary {
+  color: $gold-primary;
+  border-color: $gold-primary;
+
+  &:hover {
+    background-color: $gold-primary;
+    border-color: $gold-primary;
+    color: #fff;
+  }
+}
+
+a {
+  color: $blue-secondary;
+  transition: color 0.2s ease;
+  &:hover {
+    color: darken($blue-secondary, 15%);
+  }
+}
+
+// Bannière Hero
+.hero-section {
+  background-color: $papyrus-bg;
+  padding: 4rem 0;
+  
+  .hero-img {
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+}
+
+// Cartes des Tableaux
+.painting-card {
+  border: none;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+  }
+
+  .card-img-top {
+    height: 280px;
+    object-fit: cover;
+  }
+
+  .card-title {
+    font-family: $font-family-serif;
+    font-size: 1.25rem;
+  }
+}
+
+// Badges de statut des tableaux
+.badge-available {
+  background-color: $gold-primary;
+  color: #fff;
+}
+
+.badge-reserved {
+  background-color: $pink-accent;
+  color: #fff;
+}
+
+.badge-sold {
+  background-color: $blue-secondary;
+  color: #fff;
+}
+
+// Navbar
+.navbar-custom {
+  background-color: rgba($papyrus-bg, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba($gold-primary, 0.2);
+
+  .navbar-brand img {
+    height: 50px;
+  }
+
+  .nav-link {
+    color: $anthracite-text;
+    font-weight: 500;
+    margin: 0 0.5rem;
+    &:hover, &.active {
+      color: $gold-primary;
+    }
+  }
+}
