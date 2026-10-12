@@ -2,11 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 // Palettes de couleur
-$gold-primary: #C5A059;   // Or chic (Couleur principale et boutons)
+$gold-primary: #C5A059; // Or chic (Couleur principale et boutons)
 $blue-secondary: #6B8B9E; // Bleu aéro doux (Éléments interactifs, survol)
-$pink-accent: #D69E9E;    // Rose poudré (Accents, notifications et badges)
-$papyrus-bg: #FAF9F6;     // Blanc papyrus (Fond de page type galerie)
-$anthracite-text: #2B2B2B;// Anthracite profond (Texte haut contraste)
+$pink-accent: #D69E9E; // Rose poudré (Accents, notifications et badges)
+$papyrus-bg: #FAF9F6; // Blanc papyrus (Fond de page type galerie)
+$anthracite-text: #2B2B2B; // Anthracite profond (Texte haut contraste)
 
 // Surcharge des variables bootstrap
 $primary: $gold-primary;
@@ -31,7 +31,13 @@ body {
   line-height: 1.6;
 }
 
-h1, h2, h3, h4, h5, h6, .font-serif {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-serif {
   font-family: $font-family-serif;
   color: $anthracite-text;
   font-weight: 600;
@@ -44,7 +50,8 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   color: #fff;
   transition: all 0.3s ease;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     background-color: darken($gold-primary, 8%);
     border-color: darken($gold-primary, 8%);
     box-shadow: 0 4px 12px rgba($gold-primary, 0.3);
@@ -65,16 +72,17 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 a {
   color: $blue-secondary;
   transition: color 0.2s ease;
+
   &:hover {
     color: darken($blue-secondary, 15%);
   }
 }
 
-// Bannière Hero
+// Bannière 
 .hero-section {
   background-color: $papyrus-bg;
   padding: 4rem 0;
-  
+
   .hero-img {
     border-radius: 8px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
@@ -124,19 +132,85 @@ a {
 
 // Navbar
 .navbar-custom {
-  background-color: rgba($papyrus-bg, 0.95);
+  background-color: rgba($papyrus-bg, 0.98);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba($gold-primary, 0.2);
 
-  .navbar-brand img {
-    height: 50px;
+  .navbar-brand {
+    padding: 0.25rem 0;
+
+    img {
+      height: 100px;
+      width: auto;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.03);
+      }
+    }
   }
 
   .nav-link {
     color: $anthracite-text;
     font-weight: 500;
+    font-size: 1.05rem;
     margin: 0 0.5rem;
-    &:hover, &.active {
+
+    &:hover,
+    &.active {
+      color: $gold-primary;
+    }
+  }
+}
+
+// Footer
+.footer-custom {
+  background-color: $anthracite-text;
+  color: $papyrus-bg;
+
+  .footer-title {
+    color: $gold-primary;
+    font-size: 1.35rem;
+  }
+
+  .footer-heading {
+    color: $gold-primary;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+
+  .footer-text {
+    color: lighten($anthracite-text, 45%);
+    line-height: 1.5;
+  }
+
+  .footer-list {
+    li {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .footer-link {
+    color: $papyrus-bg;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s ease, padding-left 0.2s ease;
+
+    &:hover {
+      color: $gold-primary;
+      padding-left: 4px;
+    }
+  }
+
+  .footer-sublink {
+    color: lighten($anthracite-text, 40%);
+    text-decoration: none;
+    font-size: 0.88rem;
+    transition: color 0.2s ease;
+
+    &:hover {
       color: $gold-primary;
     }
   }
