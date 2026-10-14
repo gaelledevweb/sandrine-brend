@@ -129,12 +129,26 @@ export const getUserReservations = async (req, res) => {
   }
 };
 
-// Admin : Valider une réservation
+// Admin : Valider une réservation et marquer le tableau comme vendu (SOLD)
 export const validateReservation = async (req, res) => {
   const { id } = req.params;
   try {
+    // Récupérer le painting_id associé à cette réservation
+    const [reservationRows] = await pool.query('SELECT painting_id FROM reservations WHERE id = ?', [id]);
+    
+    if (reservationRows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Réservation introuvable.' });
+    }
+
+    const paintingId = reservationRows[0].painting_id;
+
+    // Mettre à jour le statut de la réservation à 'VALIDATED'
     await pool.query('UPDATE reservations SET status = ? WHERE id = ?', ['VALIDATED', id]);
-    res.status(200).json({ success: true, message: 'Réservation validée avec succès.' });
+
+    // Mettre à jour le statut du tableau à 'SOLD' pour qu'il apparaisse comme vendu dans la galerie
+    await pool.query("UPDATE paintings SET status = 'SOLD' WHERE id = ?", [paintingId]);
+
+    res.status(200).json({ success: true, message: 'Réservation validée et tableau marqué comme vendu.' });
   } catch (error) {
     console.error('Erreur validation réservation :', error);
     res.status(500).json({ success: false, message: 'Erreur serveur.' });

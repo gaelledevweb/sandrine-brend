@@ -62,6 +62,11 @@ const Gallery = () => {
     return painting.status === filter;
   });
 
+  // Calcul des compteurs pour chaque statut
+  const availableCount = paintings.filter(p => p.status === 'AVAILABLE').length;
+  const reservedCount = paintings.filter(p => p.status === 'RESERVED').length;
+  const soldCount = paintings.filter(p => p.status === 'SOLD' || p.status === 'VENDU').length;
+
   const renderStatusBadge = (status) => {
     switch (status) {
       case 'AVAILABLE':
@@ -69,6 +74,7 @@ const Gallery = () => {
       case 'RESERVED':
         return <Badge bg="warning" text="dark">Réservé</Badge>;
       case 'SOLD':
+      case 'VENDU':
         return <Badge bg="secondary">Vendu</Badge>;
       default:
         return null;
@@ -82,8 +88,8 @@ const Gallery = () => {
         Découvrez les créations originales de Sandrine Brend
       </p>
 
-      {/* Boutons de filtres */}
-      <div className="d-flex justify-content-center gap-2 mb-5">
+      {/* Boutons de filtres avec compteurs dynamiques */}
+      <div className="d-flex justify-content-center gap-2 mb-5 flex-wrap">
         <Button
           variant={filter === 'ALL' ? 'dark' : 'outline-dark'}
           size="sm"
@@ -96,21 +102,21 @@ const Gallery = () => {
           size="sm"
           onClick={() => setFilter('AVAILABLE')}
         >
-          Disponibles
+          Disponibles ({availableCount})
         </Button>
         <Button
           variant={filter === 'RESERVED' ? 'warning' : 'outline-warning'}
           size="sm"
           onClick={() => setFilter('RESERVED')}
         >
-          Réservés
+          Réservés ({reservedCount})
         </Button>
         <Button
           variant={filter === 'SOLD' ? 'secondary' : 'outline-secondary'}
           size="sm"
           onClick={() => setFilter('SOLD')}
         >
-          Vendus
+          Vendus ({soldCount})
         </Button>
       </div>
 

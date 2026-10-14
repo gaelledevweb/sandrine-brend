@@ -66,7 +66,7 @@ const Admin = () => {
 
   // Valider une réservation
   const handleValidateReservation = async (id) => {
-    if (!window.confirm("Confirmer et valider cette vente/réservation ?")) return;
+    if (!window.confirm("Confirmer et valider cette vente/réservation ? Le tableau passera en statut 'Vendu'.")) return;
     try {
       await API.put(`/reservations/${id}/validate`);
       
@@ -77,7 +77,7 @@ const Admin = () => {
         )
       );
 
-      fetchAdminData(); // Recharge les listes en arrière-plan
+      fetchAdminData(); // Recharge les listes en arrière-plan (mettra à jour le statut du tableau dans l'onglet des œuvres)
     } catch (err) {
       alert("Erreur lors de la validation de la réservation.");
     }
@@ -238,8 +238,11 @@ const Admin = () => {
                         <td><strong>{painting.title}</strong></td>
                         <td>{Number(painting.price).toFixed(2)} €</td>
                         <td>
-                          <Badge bg={painting.status === 'AVAILABLE' ? 'success' : painting.status === 'RESERVED' ? 'warning' : 'secondary'}>
-                            {painting.status}
+                          <Badge bg={
+                            painting.status === 'AVAILABLE' ? 'success' : 
+                            painting.status === 'SOLD' ? 'danger' : 'warning'
+                          }>
+                            {painting.status === 'SOLD' ? 'Vendu' : painting.status}
                           </Badge>
                         </td>
                         <td className="text-end">
