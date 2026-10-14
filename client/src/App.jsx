@@ -12,6 +12,7 @@ import Register from './pages/Register';
 import Reservation from './pages/Reservation';
 import UserReservations from './pages/UserReservations';
 import Admin from './pages/Admin';
+import About from './pages/About';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
               <Route path="/reservation" element={<Reservation />} />
               <Route path="/reservations" element={<UserReservations />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/about" element={<About />} />
             </Routes>
           </main>
           <Footer />

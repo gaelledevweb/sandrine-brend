@@ -215,3 +215,51 @@ a {
     }
   }
 }
+
+// Transformation responsive des tableaux admin sur mobile
+@media (max-width: 768px) {
+  .table-responsive {
+    overflow-x: visible !important; // Empêche l'apparition de la barre de scroll
+
+    table, thead, tbody, th, td, tr {
+      display: block;
+      width: 100%;
+    }
+
+    // Cache l'en-tête classique du tableau sur mobile
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    // Transforme chaque ligne (tr) en card
+    tr {
+      margin-bottom: 1rem;
+      background: #fff;
+      border: 1px solid rgba($gold-primary, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    td {
+      border: none !important;
+      position: relative;
+      padding: 6px 0 !important;
+      text-align: right;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      // Permet d'aligner proprement les images ou textes longs
+      img {
+        width: 50px !important;
+        height: 50px !important;
+        object-fit: cover;
+        border-radius: 6px;
+      }
+    }
+  }
+}
+
