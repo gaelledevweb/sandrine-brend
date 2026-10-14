@@ -34,7 +34,7 @@ const NavigationBar = () => {
                     Espace Artiste
                   </Nav.Link>
                 ) : (
-                  <Nav.Link as={NavLink} to="/profile" className="fw-bold text-primary">
+                  <Nav.Link as={NavLink} to="/reservations" className="fw-bold text-primary">
                     Mes Réservations
                   </Nav.Link>
                 )}

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Container, Card, Form, Button, Alert, InputGroup } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import API from '../services/api';
 
@@ -12,6 +12,7 @@ const Login = () => {
   
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,16 +20,35 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await API.post('/auth/login', formData);
+      const payload = {
+        email: formData.email.trim(),
+        password: formData.password
+      };
+
+      const res = await API.post('/auth/login', payload);
       if (res.data.success) {
-        login(res.data.user, res.data.token);
+        // Sauvegarde explicite et sécurisée dans le localStorage
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+
+        if (login) {
+          login(res.data.user, res.data.token);
+        }
+
         if (res.data.user.role === 'admin') {
           navigate('/admin');
         } else {
-          navigate('/gallery');
+          // Vérifie si un tableau était en attente de réservation
+          const pendingPainting = location.state?.paintingToReserve;
+          if (pendingPainting) {
+            navigate('/reservation', { state: { painting: pendingPainting } });
+          } else {
+            navigate('/gallery');
+          }
         }
       }
     } catch (err) {
+      console.error('Erreur login :', err);
       setError(err.response?.data?.message || 'Identifiants incorrects');
     } finally {
       setLoading(false);

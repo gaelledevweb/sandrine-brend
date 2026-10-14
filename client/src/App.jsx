@@ -9,6 +9,9 @@ import Home from './pages/Home';
 import Gallery from './pages/Gallery';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Reservation from './pages/Reservation';
+import UserReservations from './pages/UserReservations';
+import Admin from './pages/Admin';
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/reservation" element={<Reservation />} />
+              <Route path="/reservations" element={<UserReservations />} />
+              <Route path="/admin" element={<Admin />} />
             </Routes>
           </main>
           <Footer />

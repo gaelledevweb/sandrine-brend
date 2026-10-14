@@ -27,8 +27,10 @@ export const register = async (req, res) => {
     );
 
     const userId = result.insertId;
+    
+    // Le token inclut l'id, l'email et le rôle
     const token = jwt.sign(
-      { id: userId, role: 'user' },
+      { id: userId, email: email, role: 'user' },
       process.env.JWT_SECRET || 'secret_key',
       { expiresIn: '7d' }
     );
@@ -65,7 +67,7 @@ export const login = async (req, res) => {
       const isMatch = await bcrypt.compare(password, admin.password);
       if (isMatch) {
         const token = jwt.sign(
-          { id: admin.id, role: 'admin' },
+          { id: admin.id, email: admin.email, role: 'admin' },
           process.env.JWT_SECRET || 'secret_key',
           { expiresIn: '7d' }
         );
@@ -89,7 +91,7 @@ export const login = async (req, res) => {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
         const token = jwt.sign(
-          { id: user.id, role: user.role || 'user' },
+          { id: user.id, email: user.email, role: user.role || 'user' },
           process.env.JWT_SECRET || 'secret_key',
           { expiresIn: '7d' }
         );
