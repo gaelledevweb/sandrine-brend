@@ -28,8 +28,9 @@ export const createPainting = async (req, res) => {
   }
 
   try {
-    const imageUrl = req.file.path;
-    const publicId = req.file.filename;
+    // Récupération sécurisée de l'URL Cloudinary et du public_id renvoyés par multer-storage-cloudinary
+    const imageUrl = req.file.path || req.file.secure_url;
+    const publicId = req.file.filename || req.file.public_id;
 
     const query = `
       INSERT INTO paintings (title, dimensions, technique, price, status, image_url, cloudinary_public_id)
@@ -52,8 +53,12 @@ export const createPainting = async (req, res) => {
       paintingId: result.insertId
     });
   } catch (error) {
-    console.error('Erreur lors de la création du tableau :', error);
-    res.status(500).json({ success: false, message: 'Erreur serveur lors de la création du tableau.' });
+    console.error('ERREUR DETAILLEE CLOUDINARY/DB :', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur lors de la création du tableau.',
+      errorDetails: error.message 
+    });
   }
 };
 
@@ -70,7 +75,6 @@ export const deletePainting = async (req, res) => {
 
     const painting = rows[0];
 
-    // Supprimer l'image sur Cloudinary si elle y est hébergée
     if (painting.cloudinary_public_id) {
       await cloudinary.uploader.destroy(painting.cloudinary_public_id);
     }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Badge, Button, Alert, Spinner, Tab, Tabs } from 'react-bootstrap';
+import { Container, Table, Badge, Button, Alert, Spinner, Tab, Tabs, Form, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 
@@ -8,6 +8,21 @@ const Admin = () => {
   const [paintings, setPaintings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // États pour le formulaire d'ajout d'oeuvre
+  const [newPainting, setNewPainting] = useState({
+    title: '',
+    dimensions: '',
+    technique: '',
+    price: '',
+    status: 'AVAILABLE'
+  });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,32 +79,93 @@ const Admin = () => {
     }
   };
 
+  // Gestion du Glisser-Déposer (Drag & Drop)
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleFileSelect = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  // Soumission du formulaire d'ajout d'une oeuvre
+  const handleCreatePainting = async (e) => {
+    e.preventDefault();
+    if (!imageFile) {
+      alert("Veuillez sélectionner ou glisser une image pour le tableau.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', newPainting.title);
+    formData.append('dimensions', newPainting.dimensions);
+    formData.append('technique', newPainting.technique);
+    formData.append('price', newPainting.price);
+    formData.append('status', newPainting.status);
+    formData.append('image', imageFile);
+
+    try {
+      setSubmitting(true);
+      await API.post('/paintings', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      setSuccessMsg("Œuvre ajoutée avec succès !");
+      setNewPainting({ title: '', dimensions: '', technique: '', price: '', status: 'AVAILABLE' });
+      setImageFile(null);
+      setImagePreview(null);
+      fetchAdminData();
+
+      setTimeout(() => setSuccessMsg(''), 4000);
+    } catch (err) {
+      console.error("Erreur lors de l'ajout du tableau :", err);
+      alert("Erreur lors de l'enregistrement de l'œuvre.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   // Valider une réservation
   const handleValidateReservation = async (id) => {
     if (!window.confirm("Confirmer et valider cette vente/réservation ? Le tableau passera en statut 'Vendu'.")) return;
     try {
       await API.put(`/reservations/${id}/validate`);
-      
-      // Mise à jour visuelle instantanée dans l'interface sans attendre le rechargement complet
       setReservations(prevReservations =>
         prevReservations.map(item =>
           item.id === id ? { ...item, status: 'VALIDATED' } : item
         )
       );
-
-      fetchAdminData(); // Recharge les listes en arrière-plan (mettra à jour le statut du tableau dans l'onglet des œuvres)
+      fetchAdminData();
     } catch (err) {
       alert("Erreur lors de la validation de la réservation.");
     }
   };
 
-  // Supprimer, refuser une réservation
   const handleDeleteReservation = async (id) => {
     if (!window.confirm("Voulez-vous annuler/supprimer cette demande ? (Le tableau sera remis disponible)")) return;
     try {
       await API.delete(`/reservations/${id}`);
       setReservations(prevReservations => prevReservations.filter(item => item.id !== id));
-      fetchAdminData(); // Recharge les listes
+      fetchAdminData();
     } catch (err) {
       alert("Erreur lors de la suppression de la réservation.");
     }
@@ -118,10 +194,11 @@ const Admin = () => {
     <Container className="py-5">
       <h1 className="font-serif text-center mb-2">Espace Artiste - Administration</h1>
       <p className="text-center text-muted mb-5">
-        Gérez vos réservations et vos œuvres
+        Gérez vos réservations, vos œuvres et ajoutez de nouvelles créations
       </p>
 
       {error && <Alert variant="danger">{error}</Alert>}
+      {successMsg && <Alert variant="success">{successMsg}</Alert>}
 
       <Tabs defaultActiveKey="reservations" className="mb-4" fill>
         {/* Onglet réservations */}
@@ -180,19 +257,11 @@ const Admin = () => {
                         <td className="text-end">
                           <div className="d-flex gap-2 justify-content-end">
                             {item.status !== 'VALIDATED' && (
-                              <Button 
-                                variant="outline-success" 
-                                size="sm"
-                                onClick={() => handleValidateReservation(item.id)}
-                              >
+                              <Button variant="outline-success" size="sm" onClick={() => handleValidateReservation(item.id)}>
                                 Valider
                               </Button>
                             )}
-                            <Button 
-                              variant="outline-danger" 
-                              size="sm"
-                              onClick={() => handleDeleteReservation(item.id)}
-                            >
+                            <Button variant="outline-danger" size="sm" onClick={() => handleDeleteReservation(item.id)}>
                               Supprimer
                             </Button>
                           </div>
@@ -206,7 +275,112 @@ const Admin = () => {
           </div>
         </Tab>
 
-        {/* Onglet galerie */}
+        {/* Onglet Ajouter une oeuvre (Glisser-Déposer) */}
+        <Tab eventKey="add" title="Ajouter une œuvre">
+          <div className="bg-white p-4 rounded shadow-sm">
+            <h3 className="font-serif mb-4">Ajouter un nouveau tableau</h3>
+            <Form onSubmit={handleCreatePainting}>
+              <Row>
+                <Col md={6} className="mb-3">
+                  <Form.Group>
+                    <Form.Label>Titre de l'œuvre</Form.Label>
+                    <Form.Control
+                      type="text"
+                      required
+                      value={newPainting.title}
+                      onChange={(e) => setNewPainting({ ...newPainting, title: e.target.value })}
+                      placeholder="Ex: Harmonie Bleue"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6} className="mb-3">
+                  <Form.Group>
+                    <Form.Label>Prix (€)</Form.Label>
+                    <Form.Control
+                      type="number"
+                      step="0.01"
+                      required
+                      value={newPainting.price}
+                      onChange={(e) => setNewPainting({ ...newPainting, price: e.target.value })}
+                      placeholder="Ex: 450"
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={6} className="mb-3">
+                  <Form.Group>
+                    <Form.Label>Dimensions</Form.Label>
+                    <Form.Control
+                      type="text"
+                      required
+                      value={newPainting.dimensions}
+                      onChange={(e) => setNewPainting({ ...newPainting, dimensions: e.target.value })}
+                      placeholder="Ex: 60x80 cm"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6} className="mb-3">
+                  <Form.Group>
+                    <Form.Label>Technique</Form.Label>
+                    <Form.Control
+                      type="text"
+                      required
+                      value={newPainting.technique}
+                      onChange={(e) => setNewPainting({ ...newPainting, technique: e.target.value })}
+                      placeholder="Ex: Acrylique sur toile"
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              {/* Zone Glisser-Déposer (Drag and Drop) */}
+              <Form.Group className="mb-4">
+                <Form.Label>Image de l'œuvre</Form.Label>
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  style={{
+                    border: '2px dashed #ccc',
+                    borderRadius: '8px',
+                    padding: '30px',
+                    textAlign: 'center',
+                    backgroundColor: isDragging ? '#f8f9fa' : '#fff',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => document.getElementById('fileInput').click()}
+                >
+                  {imagePreview ? (
+                    <div>
+                      <img src={imagePreview} alt="Aperçu" style={{ maxHeight: '150px', objectFit: 'contain' }} className="mb-2 rounded" />
+                      <p className="text-muted small mb-0">Cliquez ou glissez une autre image pour remplacer</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="mb-1 text-muted">Glissez-déposez votre image ici, ou <strong>cliquez pour parcourir</strong></p>
+                      <small className="text-secondary">(Formats acceptés : JPG, PNG, WEBP)</small>
+                    </div>
+                  )}
+                  <input
+                    id="fileInput"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={handleFileSelect}
+                  />
+                </div>
+              </Form.Group>
+
+              <Button variant="primary" type="submit" disabled={submitting}>
+                {submitting ? 'Envoi en cours...' : 'Publier l\'œuvre'}
+              </Button>
+            </Form>
+          </div>
+        </Tab>
+
+        {/* Onglet galerie / gestion */}
         <Tab eventKey="paintings" title={`Mes Œuvres (${paintings.length})`}>
           <div className="bg-white p-4 rounded shadow-sm">
             <h3 className="font-serif mb-4">Gestion de la galerie</h3>
@@ -246,11 +420,7 @@ const Admin = () => {
                           </Badge>
                         </td>
                         <td className="text-end">
-                          <Button 
-                            variant="outline-danger" 
-                            size="sm"
-                            onClick={() => handleDeletePainting(painting.id)}
-                          >
+                          <Button variant="outline-danger" size="sm" onClick={() => handleDeletePainting(painting.id)}>
                             Supprimer
                           </Button>
                         </td>
