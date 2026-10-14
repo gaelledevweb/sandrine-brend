@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Badge, Spinner, Alert, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Container, Row, Col, Card, Badge, Spinner, Alert, Button, Modal } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 
 const Gallery = () => {
@@ -8,6 +8,12 @@ const Gallery = () => {
   const [filter, setFilter] = useState('ALL');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // États pour la modale de détails
+  const [selectedPainting, setSelectedPainting] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const navigate = useNavigate(); // Initialisation de navigate
 
   useEffect(() => {
     fetchPaintings();
@@ -16,9 +22,6 @@ const Gallery = () => {
   const fetchPaintings = async () => {
     try {
       const res = await API.get('/paintings');
-      console.log('Réponse API Paintings :', res.data);
-
-      // Le backend renvoie { success: true, count: 19, data: [...] } ou { paintings: [...] }
       const items = res.data?.data || res.data?.paintings || (Array.isArray(res.data) ? res.data : []);
       setPaintings(items);
     } catch (err) {
@@ -26,6 +29,31 @@ const Gallery = () => {
       setError('Impossible de charger les œuvres. Vérifiez votre serveur backend.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCardClick = (painting) => {
+    setSelectedPainting(painting);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedPainting(null);
+  };
+
+  // Gestion du clic sur Réserver
+  const handleReserve = (painting) => {
+    const token = localStorage.getItem('token'); // Vérifie si l'utilisateur est connecté
+
+    if (!token) {
+      // S'il n'est pas connecté, on ferme la modale et on le redirige vers /login
+      setShowModal(false);
+      navigate('/login', { state: { from: '/gallery', paintingToReserve: painting } });
+    } else {
+      // S'il est connecté, on peut rediriger vers la page de réservation ou ouvrir le formulaire de réservation
+      setShowModal(false);
+      navigate('/reservation', { state: { painting } });
     }
   };
 
@@ -103,7 +131,11 @@ const Gallery = () => {
         <Row xs={1} md={2} lg={3} className="g-4">
           {filteredPaintings.map((painting) => (
             <Col key={painting.id}>
-              <Card className="h-100 border-0 shadow-sm overflow-hidden">
+              <Card 
+                className="h-100 border-0 shadow-sm overflow-hidden"
+                style={{ cursor: 'pointer' }}
+                onClick={() => handleCardClick(painting)}
+              >
                 <div style={{ height: '280px', overflow: 'hidden', position: 'relative' }}>
                   <Card.Img
                     variant="top"
@@ -128,12 +160,9 @@ const Gallery = () => {
 
                   <div className="mt-auto d-flex align-items-center justify-content-between pt-3 border-top">
                     <span className="fw-bold fs-5">{Number(painting.price).toFixed(2)} €</span>
-                    <Link
-                      to={`/paintings/${painting.id}`}
-                      className="btn btn-outline-primary btn-sm"
-                    >
+                    <span className="btn btn-outline-primary btn-sm">
                       Détails
-                    </Link>
+                    </span>
                   </div>
                 </Card.Body>
               </Card>
@@ -141,6 +170,65 @@ const Gallery = () => {
           ))}
         </Row>
       )}
+
+      {/* Modale de détails du tableau */}
+      <Modal show={showModal} onHide={handleCloseModal} size="lg" centered>
+        {selectedPainting && (
+          <>
+            <Modal.Header closeButton className="border-0 pb-0">
+              <Modal.Title className="font-serif">{selectedPainting.title}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Row className="align-items-center">
+                <Col md={7} className="mb-3 mb-md-0">
+                  <img
+                    src={
+                      selectedPainting.image_url && selectedPainting.image_url.startsWith('http')
+                        ? selectedPainting.image_url
+                        : `/images/${selectedPainting.image_url}`
+                    }
+                    alt={selectedPainting.title}
+                    className="img-fluid rounded shadow-sm w-100"
+                    style={{ maxHeight: '450px', objectFit: 'contain', backgroundColor: '#f8f9fa' }}
+                  />
+                </Col>
+                <Col md={5} className="d-flex flex-column justify-content-between">
+                  <div>
+                    <div className="mb-3">
+                      {renderStatusBadge(selectedPainting.status)}
+                    </div>
+                    <p className="text-muted mb-2">
+                      <strong>Dimensions :</strong> {selectedPainting.dimensions}
+                    </p>
+                    <p className="text-muted mb-2">
+                      <strong>Technique :</strong> {selectedPainting.technique}
+                    </p>
+                    {selectedPainting.description && (
+                      <p className="text-muted small mt-3 mb-3">
+                        {selectedPainting.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="pt-3 border-top d-flex align-items-center justify-content-between">
+                    <span className="fw-bold fs-4 text-primary">
+                      {Number(selectedPainting.price).toFixed(2)} €
+                    </span>
+                    {selectedPainting.status === 'AVAILABLE' && (
+                      <Button 
+                        variant="primary" 
+                        size="sm"
+                        onClick={() => handleReserve(selectedPainting)}
+                      >
+                        Réserver
+                      </Button>
+                    )}
+                  </div>
+                </Col>
+              </Row>
+            </Modal.Body>
+          </>
+        )}
+      </Modal>
     </Container>
   );
 };
