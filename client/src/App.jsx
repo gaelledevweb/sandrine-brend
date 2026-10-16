@@ -13,6 +13,7 @@ import Reservation from './pages/Reservation';
 import UserReservations from './pages/UserReservations';
 import Admin from './pages/Admin';
 import About from './pages/About';
+import Contact from './pages/Contact';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
               <Route path="/reservations" element={<UserReservations />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
             </Routes>
           </main>
           <Footer />

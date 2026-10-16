@@ -1,29 +1,27 @@
-// Polices
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+// Polices et variables, charte graphique
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap');
 
-// Palettes de couleur
-$gold-primary: #C5A059; // Or chic (Couleur principale et boutons)
-$blue-secondary: #6B8B9E; // Bleu aéro doux (Éléments interactifs, survol)
-$pink-accent: #D69E9E; // Rose poudré (Accents, notifications et badges)
-$papyrus-bg: #FAF9F6; // Blanc papyrus (Fond de page type galerie)
-$anthracite-text: #2B2B2B; // Anthracite profond (Texte haut contraste)
+$gold-primary: #C5A059;     // Or chic (Couleur principale et boutons)
+$blue-secondary: #6B8B9E;   // Bleu doux (Éléments interactifs)
+$pink-accent: #D69E9E;      // Rose poudré (Badges et accents)
+$papyrus-bg: #FAF9F6;       // Blanc papyrus (Fond de page du site)
+$anthracite-text: #2B2B2B;  // Anthracite (Texte haut contraste)
 
-// Surcharge des variables bootstrap
+// Surcharge des variables Bootstrap
 $primary: $gold-primary;
 $secondary: $blue-secondary;
 $accent: $pink-accent;
 $body-bg: $papyrus-bg;
 $body-color: $anthracite-text;
 
-// Polices Bootstrap
 $font-family-serif: 'Playfair Display', Georgia, serif;
 $font-family-sans-serif: 'Montserrat', sans-serif;
 $font-family-base: $font-family-sans-serif;
 
-// Import complet des modules Bootstrap
+// Import Bootstrap
 @import "bootstrap/scss/bootstrap";
 
-// Styles globaux et polices
+// 2. Base et typographie globale
 body {
   background-color: $papyrus-bg;
   color: $anthracite-text;
@@ -31,68 +29,82 @@ body {
   line-height: 1.6;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.font-serif {
+h1, h2, h3, h4, h5, h6, .font-serif {
   font-family: $font-family-serif;
   color: $anthracite-text;
   font-weight: 600;
 }
 
-// Personnalisation des boutons et éléments
+a {
+  color: $blue-secondary;
+  transition: color 0.2s ease;
+  &:hover {
+    color: darken($blue-secondary, 15%);
+  }
+}
+
+// 3. Navbar et Footer
+.navbar-custom {
+  background-color: #ffffff;
+  border-bottom: 1px solid rgba($gold-primary, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+
+  .navbar-brand img {
+    height: 100px;
+    width: auto;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    &:hover {
+      transform: scale(1.03);
+    }
+  }
+
+  .nav-link {
+    color: $anthracite-text;
+    font-weight: 500;
+    font-size: 1.05rem;
+    margin: 0 0.5rem;
+    &:hover, &.active {
+      color: $gold-primary;
+    }
+  }
+}
+
+.footer-custom {
+  background-color: $anthracite-text;
+  color: $papyrus-bg;
+
+  .footer-title, .footer-heading {
+    color: $gold-primary;
+  }
+
+  .footer-link {
+    color: $papyrus-bg;
+    text-decoration: none;
+    transition: color 0.2s ease, padding-left 0.2s ease;
+    &:hover {
+      color: $gold-primary;
+      padding-left: 4px;
+    }
+  }
+}
+
+// Composants, Cartes 
 .btn-primary {
   background-color: $gold-primary;
   border-color: $gold-primary;
   color: #fff;
   transition: all 0.3s ease;
-
-  &:hover,
-  &:focus {
+  &:hover, &:focus {
     background-color: darken($gold-primary, 8%);
     border-color: darken($gold-primary, 8%);
     box-shadow: 0 4px 12px rgba($gold-primary, 0.3);
   }
 }
 
-.btn-outline-primary {
-  color: $gold-primary;
-  border-color: $gold-primary;
-
-  &:hover {
-    background-color: $gold-primary;
-    border-color: $gold-primary;
-    color: #fff;
-  }
-}
-
-a {
-  color: $blue-secondary;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: darken($blue-secondary, 15%);
-  }
-}
-
-// Bannière 
-.hero-section {
-  background-color: $papyrus-bg;
-  padding: 4rem 0;
-
-  .hero-img {
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  }
-}
-
-// Cartes des Tableaux
 .painting-card {
   border: none;
-  background-color: #fff;
+  background-color: #ffffff;
   border-radius: 8px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -107,152 +119,94 @@ a {
     height: 280px;
     object-fit: cover;
   }
+}
 
-  .card-title {
-    font-family: $font-family-serif;
-    font-size: 1.25rem;
+.badge-available { background-color: $gold-primary; color: #fff; }
+.badge-reserved { background-color: $pink-accent; color: #fff; }
+.badge-sold { background-color: $blue-secondary; color: #fff; }
+
+// Neutralisation stricte et absolue de tout survol grisé Bootstrap (Desktop, tablette et mobile)
+.table,
+.table-hover,
+.table-hover > tbody > tr,
+.table-hover > tbody > tr > td,
+.table-hover > tbody > tr > th {
+  --bs-table-accent-bg: transparent !important;
+  --bs-table-hover-bg: transparent !important;
+  background-color: transparent !important;
+  color: inherit !important;
+
+  &:hover, &:focus, &:active {
+    --bs-table-accent-bg: transparent !important;
+    --bs-table-hover-bg: transparent !important;
+    background-color: transparent !important;
+    color: inherit !important;
   }
 }
 
-// Badges de statut des tableaux
-.badge-available {
-  background-color: $gold-primary;
-  color: #fff;
+// Empêche les conteneurs blancs de passer au gris au survol
+.bg-white {
+  background-color: #ffffff !important;
 }
 
-.badge-reserved {
-  background-color: $pink-accent;
-  color: #fff;
-}
-
-.badge-sold {
-  background-color: $blue-secondary;
-  color: #fff;
-}
-
-// Navbar
-.navbar-custom {
-  background-color: rgba($papyrus-bg, 0.98);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba($gold-primary, 0.2);
-
-  .navbar-brand {
-    padding: 0.25rem 0;
-
-    img {
-      height: 100px;
-      width: auto;
-      object-fit: contain;
-      transition: transform 0.3s ease;
-
-      &:hover {
-        transform: scale(1.03);
-      }
-    }
-  }
-
-  .nav-link {
-    color: $anthracite-text;
-    font-weight: 500;
-    font-size: 1.05rem;
-    margin: 0 0.5rem;
-
-    &:hover,
-    &.active {
-      color: $gold-primary;
-    }
-  }
-}
-
-// Footer
-.footer-custom {
-  background-color: $anthracite-text;
-  color: $papyrus-bg;
-
-  .footer-title {
-    color: $gold-primary;
-    font-size: 1.35rem;
-  }
-
-  .footer-heading {
-    color: $gold-primary;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-    font-weight: 600;
-  }
-
-  .footer-text {
-    color: lighten($anthracite-text, 45%);
-    line-height: 1.5;
-  }
-
-  .footer-list {
-    li {
-      margin-bottom: 0.5rem;
-    }
-  }
-
-  .footer-link {
-    color: $papyrus-bg;
-    text-decoration: none;
-    font-size: 0.95rem;
-    transition: color 0.2s ease, padding-left 0.2s ease;
-
-    &:hover {
-      color: $gold-primary;
-      padding-left: 4px;
-    }
-  }
-
-  .footer-sublink {
-    color: lighten($anthracite-text, 40%);
-    text-decoration: none;
-    font-size: 0.88rem;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: $gold-primary;
-    }
-  }
-}
-
-// Transformation responsive des tableaux admin sur mobile
-@media (max-width: 768px) {
+// Responsive admin (mobile et tablette <= 1024px)
+@media (max-width: 1024px) {
   .table-responsive {
-    overflow-x: visible !important; // Empêche l'apparition de la barre de scroll
+    overflow-x: visible !important;
+    border: none !important;
 
     table, thead, tbody, th, td, tr {
       display: block;
       width: 100%;
     }
 
-    // Cache l'en-tête classique du tableau sur mobile
     thead tr {
       position: absolute;
       top: -9999px;
       left: -9999px;
     }
 
-    // Transforme chaque ligne (tr) en card
+    // Cartes d'administration sans fond gris au survol
     tr {
-      margin-bottom: 1rem;
-      background: #fff;
-      border: 1px solid rgba($gold-primary, 0.2);
-      border-radius: 8px;
-      padding: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      margin-bottom: 1.25rem;
+      background-color: #ffffff !important;
+      border: 1px solid rgba($gold-primary, 0.25);
+      border-radius: 10px;
+      padding: 18px 20px !important; 
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+
+      &:hover, &:focus, &:active {
+        background-color: #ffffff !important;
+      }
     }
 
     td {
       border: none !important;
-      position: relative;
-      padding: 6px 0 !important;
-      text-align: right;
+      padding: 8px 0 !important;
+      text-align: left !important; 
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: center;
+      flex-wrap: wrap;
+      width: 100%;
+      background-color: transparent !important;
 
-      // Permet d'aligner proprement les images ou textes longs
+      &:has(small) {
+        display: block !important;
+        background-color: transparent !important;
+        padding: 6px 0 !important;
+        margin: 4px 0;
+        border: none !important;
+      }
+
+      &.text-end {
+        justify-content: flex-start !important;
+        margin-top: 10px;
+        padding-top: 12px !important;
+        border-top: 1px dashed rgba(0, 0, 0, 0.08) !important;
+        background-color: transparent !important;
+      }
+
       img {
         width: 50px !important;
         height: 50px !important;
@@ -262,4 +216,3 @@ a {
     }
   }
 }
-

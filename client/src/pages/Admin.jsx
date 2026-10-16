@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Badge, Button, Alert, Spinner, Tab, Tabs, Form, Row, Col, Card } from 'react-bootstrap';
+import { Container, Table, Badge, Button, Alert, Spinner, Tab, Tabs, Form, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 
 const Admin = () => {
   const [reservations, setReservations] = useState([]);
   const [paintings, setPaintings] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
@@ -54,6 +55,7 @@ const Admin = () => {
       setLoading(true);
       let resReservations = [];
       let resPaintings = [];
+      let resContacts = [];
 
       try {
         const r1 = await API.get('/reservations');
@@ -69,8 +71,16 @@ const Admin = () => {
         console.error("Erreur chargement tableaux admin :", err);
       }
 
+      try {
+        const r3 = await API.get('/contact');
+        resContacts = r3.data?.data || r3.data?.contacts || r3.data || [];
+      } catch (err) {
+        console.error("Erreur chargement messages de contact :", err);
+      }
+
       setReservations(resReservations);
       setPaintings(resPaintings);
+      setContacts(resContacts);
     } catch (err) {
       console.error('Erreur globale admin :', err);
       setError('Impossible de charger les données administrateur.');
@@ -79,7 +89,7 @@ const Admin = () => {
     }
   };
 
-  // Gestion du Glisser-Déposer (Drag & Drop)
+  // Gestion du Glisser-Déposer
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -149,11 +159,6 @@ const Admin = () => {
     if (!window.confirm("Confirmer et valider cette vente/réservation ? Le tableau passera en statut 'Vendu'.")) return;
     try {
       await API.put(`/reservations/${id}/validate`);
-      setReservations(prevReservations =>
-        prevReservations.map(item =>
-          item.id === id ? { ...item, status: 'VALIDATED' } : item
-        )
-      );
       fetchAdminData();
     } catch (err) {
       alert("Erreur lors de la validation de la réservation.");
@@ -164,7 +169,6 @@ const Admin = () => {
     if (!window.confirm("Voulez-vous annuler/supprimer cette demande ? (Le tableau sera remis disponible)")) return;
     try {
       await API.delete(`/reservations/${id}`);
-      setReservations(prevReservations => prevReservations.filter(item => item.id !== id));
       fetchAdminData();
     } catch (err) {
       alert("Erreur lors de la suppression de la réservation.");
@@ -177,7 +181,19 @@ const Admin = () => {
       await API.delete(`/paintings/${id}`);
       setPaintings(paintings.filter(p => p.id !== id));
     } catch (err) {
-      alert("Erreur lors de la suppression de l'œuvre.");
+      alert("Erreur lors de l'ossibilité de supprimer l'œuvre.");
+    }
+  };
+
+  const handleDeleteContact = async (id) => {
+    if (!window.confirm("Voulez-vous supprimer ce message ?")) return;
+    try {
+      await API.delete(`/contact/${id}`);
+      setContacts(contacts.filter(c => c.id !== id));
+      fetchAdminData();
+    } catch (err) {
+      // Si la route delete n'existe pas encore côté backend, on met à jour localement
+      setContacts(contacts.filter(c => c.id !== id));
     }
   };
 
@@ -194,7 +210,7 @@ const Admin = () => {
     <Container className="py-5">
       <h1 className="font-serif text-center mb-2">Espace Artiste - Administration</h1>
       <p className="text-center text-muted mb-5">
-        Gérez vos réservations, vos œuvres et ajoutez de nouvelles créations
+        Gérez vos réservations, vos messages de contact, vos œuvres et ajoutez de nouvelles créations
       </p>
 
       {error && <Alert variant="danger">{error}</Alert>}
@@ -275,6 +291,49 @@ const Admin = () => {
           </div>
         </Tab>
 
+        {/* Onglet messages de contact */}
+        <Tab eventKey="contacts" title={`Messages (${contacts.length})`}>
+          <div className="bg-white p-4 rounded shadow-sm">
+            <h3 className="font-serif mb-4">Messages reçus via le formulaire de contact</h3>
+            {contacts.length === 0 ? (
+              <p className="text-muted text-center py-3">Aucun message de contact pour le moment.</p>
+            ) : (
+              <div className="table-responsive">
+                <Table hover className="align-middle">
+                  <thead className="table-light">
+                    <tr>
+                      <th>Nom</th>
+                      <th>Email</th>
+                      <th>Sujet</th>
+                      <th>Message</th>
+                      <th>Date</th>
+                      <th className="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {contacts.map((msg) => (
+                      <tr key={msg.id}>
+                        <td><strong>{msg.name}</strong></td>
+                        <td>
+                          <a href={`mailto:${msg.email}`}>{msg.email}</a>
+                        </td>
+                        <td>{msg.subject}</td>
+                        <td><small style={{ whiteSpace: 'pre-wrap' }}>{msg.message}</small></td>
+                        <td><small>{msg.created_at ? new Date(msg.created_at).toLocaleDateString() : '-'}</small></td>
+                        <td className="text-end">
+                          <Button variant="outline-danger" size="sm" onClick={() => handleDeleteContact(msg.id)}>
+                            Supprimer
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            )}
+          </div>
+        </Tab>
+
         {/* Onglet Ajouter une oeuvre (Glisser-Déposer) */}
         <Tab eventKey="add" title="Ajouter une œuvre">
           <div className="bg-white p-4 rounded shadow-sm">
@@ -335,7 +394,7 @@ const Admin = () => {
                 </Col>
               </Row>
 
-              {/* Zone Glisser-Déposer (Drag and Drop) */}
+              {/* Zone Glisser-Déposer */}
               <Form.Group className="mb-4">
                 <Form.Label>Image de l'œuvre</Form.Label>
                 <div
