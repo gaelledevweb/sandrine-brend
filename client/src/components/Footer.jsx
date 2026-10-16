@@ -48,7 +48,7 @@ const Footer = () => {
             <h6 className="text-uppercase footer-heading mb-3">Informations Légales</h6>
             <ul className="list-unstyled footer-list mb-0">
               <li><Link to="/mentions-legales" className="footer-sublink">Mentions Légales</Link></li>
-              <li><Link to="/politique-confidentialite" className="footer-sublink">Politique de Confidentialité</Link></li>
+              <li><Link to="/politique-de-confidentialite" className="footer-sublink">Politique de Confidentialité</Link></li>
               <li>
                 <button 
                   onClick={() => alert("Gestionnaire de cookies : Seuls les cookies essentiels au fonctionnement du site sont utilisés.")} 
