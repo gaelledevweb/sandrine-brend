@@ -16,6 +16,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Legal from './pages/Legal';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/mentions-legales" element={<Legal />} />
               <Route path="/politique-de-confidentialite" element={<PrivacyPolicy />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
           <Footer />
