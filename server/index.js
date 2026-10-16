@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet'; // Import de Helmet
 
 import paintingsRoutes from './routes/paintingsRoutes.js';
 import authRoutes from './routes/authRoutes.js';
@@ -11,6 +12,13 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Activation de Helmet pour la sécurité des en-têtes HTTP
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }, // Autorise l'affichage des images hébergées par Cloudinary
+  })
+);
 
 app.use(cors());
 app.use(express.json());
