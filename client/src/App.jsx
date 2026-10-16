@@ -14,6 +14,7 @@ import UserReservations from './pages/UserReservations';
 import Admin from './pages/Admin';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Legal from './pages/Legal';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
               <Route path="/admin" element={<Admin />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/mentions-legales" element={<Legal />} />
             </Routes>
           </main>
           <Footer />
