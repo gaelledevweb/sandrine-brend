@@ -21,7 +21,7 @@ $font-family-base: $font-family-sans-serif;
 // Import Bootstrap
 @import "bootstrap/scss/bootstrap";
 
-// 2. Base et typographie globale
+// Base et typographie globale
 body {
   background-color: $papyrus-bg;
   color: $anthracite-text;
@@ -43,7 +43,7 @@ a {
   }
 }
 
-// 3. Navbar et Footer
+// Navbar et Footer
 .navbar-custom {
   background-color: #ffffff;
   border-bottom: 1px solid rgba($gold-primary, 0.2);
@@ -66,6 +66,26 @@ a {
     margin: 0 0.5rem;
     &:hover, &.active {
       color: $gold-primary;
+    }
+  }
+
+  // Animation et conversion du bouton Burger en croix à l'ouverture
+  .navbar-toggler {
+    border: none;
+    padding: 0.25rem 0.5rem;
+    &:focus {
+      box-shadow: none;
+    }
+
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23C5A059' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+      transition: transform 0.3s ease-in-out, background-image 0.3s ease-in-out;
+    }
+
+    // Lorsque le menu est ouvert (la classe .collapsed disparaît)
+    &:not(.collapsed) .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23C5A059' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M6 6l18 18M6 24L24 6'/%3e%3c/svg%3e");
+      transform: rotate(90deg);
     }
   }
 }
