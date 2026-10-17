@@ -44,7 +44,7 @@ const NavigationBar = () => {
               </>
             ) : (
               <Nav.Link as={NavLink} to="/login" className="ms-lg-2">
-                <Button variant="outline-primary" size="sm">Connexion / Inscription</Button>
+                <Button variant="outline-primary" size="sm">Connexion</Button>
               </Nav.Link>
             )}
           </Nav>
