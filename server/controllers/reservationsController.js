@@ -143,8 +143,7 @@ export const validateReservation = async (req, res) => {
     const paintingId = reservationRows[0].painting_id;
 
     // Mettre à jour le statut de la réservation à 'VALIDATED'
-    await pool.query('UPDATE reservations SET status = ? WHERE id = ?', ['VALIDATED', id]);
-
+    await pool.query('UPDATE reservations SET status = ? WHERE id = ?', ['CONFIRMED', id]);
     // Mettre à jour le statut du tableau à 'SOLD' pour qu'il apparaisse comme vendu dans la galerie
     await pool.query("UPDATE paintings SET status = 'SOLD' WHERE id = ?", [paintingId]);
 
