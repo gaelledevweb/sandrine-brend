@@ -7,6 +7,12 @@ Architecture
 - **server/** : Backend API REST Node.js / Express
 - **database/** : Scripts SQL et schéma BDD
 
+Hébergement : 
+- Frontend via Vercel : https://sandrine-brend.vercel.app/
+- Backend via Render : https://sandrine-brend-backend.onrender.com
+- Base de données : Aiven (MySQL), Cloud MySQL Managed (Accès SSL sécurisé)
+- Gestion des médias : Cloudinary, CDN média et optimisation WebP
+
 Installation
 1. Backend : `cd server && npm install`
 2. Frontend : `cd client && npm install`

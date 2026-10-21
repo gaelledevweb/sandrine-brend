@@ -123,7 +123,7 @@ CREATE TABLE `reservations` (
   `client_email` varchar(100) NOT NULL,
   `client_phone` varchar(20) DEFAULT NULL,
   `message` text DEFAULT NULL,
-  `status` enum('PENDING','CONFIRMED','CANCELLED') DEFAULT 'PENDING',
+  `status` enum('PENDING', 'CONFIRMED', 'CANCELLED', 'VALIDATED', 'validated') DEFAULT 'PENDING',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
